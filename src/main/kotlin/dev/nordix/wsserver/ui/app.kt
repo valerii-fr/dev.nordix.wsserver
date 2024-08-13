@@ -1,5 +1,6 @@
 package dev.nordix.wsserver.ui
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowScope
 import androidx.compose.ui.window.WindowState
@@ -36,6 +38,15 @@ fun WindowScope.app(
     val toggleState by server.toggleState.collectAsState()
     val connectedDevices by server.connectedHosts.collectAsState()
 
+    val infiniteTransition = rememberInfiniteTransition()
+    val toggleRotation by infiniteTransition.animateFloat(
+        initialValue = 0F,
+        targetValue = 360F,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2500, easing = LinearEasing)
+        )
+    )
+
     MaterialTheme {
         Scaffold(
             topBar = {
@@ -47,8 +58,11 @@ fun WindowScope.app(
                             onClick = messageRepo::clear
                         )
                         NordixIconButton(
-                            icon = if (!toggleState) Icons.Default.Power else Icons.Default.PowerOff,
-                            onClick = server::toggleAll
+                            icon = if (toggleState) Icons.Default.Refresh else Icons.Default.HourglassDisabled,
+                            onClick = server::toggleAll,
+                            modifier = Modifier.rotate(
+                                if(toggleState) toggleRotation else 0f
+                            )
                         )
                     },
                     navigationIcon = {

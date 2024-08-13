@@ -54,7 +54,7 @@ class CommonServer (private val scope: CoroutineScope) {
 
     fun toggleAll() {
         _toggleState.value = !_toggleState.value
-        socketCallbacks.forEach { (address, cb) ->
+        socketCallbacks.forEach { (_, cb) ->
             cb.invoke(
                 if (!_toggleState.value) "1.1" else "1.0"
             )

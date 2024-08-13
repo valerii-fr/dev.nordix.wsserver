@@ -17,8 +17,6 @@ import me.sample.library.resources.nordix
 import me.sample.library.resources.title
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import java.io.File
-
 @Composable
 fun WindowScope.NordixTitle(
     ktorState: KtorStatus
