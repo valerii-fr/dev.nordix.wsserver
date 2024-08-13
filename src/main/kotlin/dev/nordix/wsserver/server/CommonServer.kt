@@ -8,6 +8,8 @@ import dev.nordix.wsserver.Constants.SERVICE_VISIBLE_NAME
 import dev.nordix.wsserver.devices.DeviceAction
 import dev.nordix.wsserver.devices.DeviceActions
 import dev.nordix.wsserver.devices.DeviceType
+import dev.nordix.wsserver.devices.DeviceEffect
+import dev.nordix.wsserver.helpers.JsonHelper.json
 import dev.nordix.wsserver.helpers.KbHelper
 import dev.nordix.wsserver.server.model.ConnectedDevice
 import io.ktor.server.netty.*
@@ -16,6 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.encodeToJsonElement
 
 class CommonServer (private val scope: CoroutineScope) {
 
@@ -53,11 +56,17 @@ class CommonServer (private val scope: CoroutineScope) {
             }
     }
 
-    fun setSocketCallback(address: String, block: (String) -> Unit) {
-        socketCallbacks[address] = block
+    fun setSocketCallback(host: String, block: (String) -> Unit) {
+        socketCallbacks[host] = block
     }
 
-    fun updateOnConnect(connectedDevice: ConnectedDevice) {
+    private fun postEffect(effect: DeviceEffect, vararg host: String) {
+        host.forEach { deviceHost ->
+            socketCallbacks[deviceHost]?.invoke(effect.code)
+        }
+    }
+
+    fun connected(connectedDevice: ConnectedDevice) {
         println("updating $connectedDevice")
         _connectedHosts.update {
             it.toMutableSet().apply {
@@ -78,22 +87,15 @@ class CommonServer (private val scope: CoroutineScope) {
 
     fun toggleAll() {
         _toggleState.value = !_toggleState.value
-        socketCallbacks.forEach { (_, cb) ->
-            cb.invoke(
-                if (!_toggleState.value) "1.1" else "1.0"
-            )
-        }
-    }
-
-    fun toggleToNoCallback(state: Boolean) {
         scope.launch {
-            if (state) {
+            if (toggleState.value) {
                 KbHelper.startTimer()
+                postEffect(DeviceEffect.LedOff, *socketCallbacks.keys.toTypedArray())
             } else {
                 KbHelper.pauseTimer()
+                postEffect(DeviceEffect.LedOn, *socketCallbacks.keys.toTypedArray())
             }
         }
-        _toggleState.value = state
     }
 
     fun unregister() {

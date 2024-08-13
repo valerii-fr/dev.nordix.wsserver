@@ -38,7 +38,10 @@ fun Application.configureSockets() {
             val local = call.request.local
 
             server.setSocketCallback(local.remoteAddress) { string ->
-                scope.launch { send(string) }
+                scope.launch {
+                    println("sending from callback $string")
+                    send(string)
+                }
             }
 
             scope.launch {
@@ -76,7 +79,7 @@ fun Application.configureSockets() {
                                     }
                                 )
                                 println("presented $cd")
-                                server.updateOnConnect(cd)
+                                server.connected(cd)
                             }
                             null -> throw IllegalArgumentException("json contains no message type parameter")
                             else -> throw UnsupportedOperationException("no such element in known list")

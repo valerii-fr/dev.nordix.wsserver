@@ -18,21 +18,32 @@ import androidx.compose.ui.window.WindowState
 import dev.nordix.wsserver.server.CommonServer
 import dev.nordix.wsserver.server.MessageRepo
 import dev.nordix.wsserver.stateholder.KtorLifecycleObserver
+import dev.nordix.wsserver.stateholder.KtorLifecycleObserver.ObserverCallback.OnStartedCallback
+import dev.nordix.wsserver.stateholder.KtorLifecycleObserver.ObserverCallback.OnStoppedCallback
 import dev.nordix.wsserver.ui.composable.DevicesDrawer
 import dev.nordix.wsserver.ui.composable.MessageCard
 import dev.nordix.wsserver.ui.composable.NordixIconButton
 import dev.nordix.wsserver.ui.composable.NordixTitle
 import org.koin.compose.koinInject
+import org.koin.java.KoinJavaComponent.inject
 
 @Composable
 fun WindowScope.app(
     onClose: () -> Unit,
     windowState: WindowState,
+    args: Array<String>,
 ) {
 
     val observer = koinInject<KtorLifecycleObserver>()
     val server = koinInject<CommonServer>()
     val messageRepo = koinInject<MessageRepo>()
+
+    observer.setCallback(OnStartedCallback { server.register() } )
+    observer.setCallback(OnStoppedCallback { server.unregister() } )
+
+    LaunchedEffect(Unit) {
+        server.invoke(args)
+    }
 
     val messages by messageRepo.messages.collectAsState()
     val ktorState by observer.currentStatus.collectAsState()
