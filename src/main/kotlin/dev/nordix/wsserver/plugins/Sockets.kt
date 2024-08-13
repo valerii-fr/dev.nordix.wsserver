@@ -11,7 +11,6 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.ktor.ext.inject
-import org.koin.logger.SLF4JLogger
 import java.time.Duration
 import java.time.Instant
 
