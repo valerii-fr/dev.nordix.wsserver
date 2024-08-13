@@ -1,4 +1,4 @@
-package dev.nordix.wsserver.server
+package dev.nordix.wsserver.server.model
 
 import java.time.Instant
 

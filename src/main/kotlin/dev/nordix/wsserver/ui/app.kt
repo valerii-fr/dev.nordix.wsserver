@@ -1,5 +1,6 @@
 package dev.nordix.wsserver.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,9 +11,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowScope
+import androidx.compose.ui.window.WindowState
 import dev.nordix.wsserver.server.CommonServer
 import dev.nordix.wsserver.server.MessageRepo
 import dev.nordix.wsserver.stateholder.KtorLifecycleObserver
+import dev.nordix.wsserver.ui.composable.DevicesDrawer
 import dev.nordix.wsserver.ui.composable.MessageCard
 import dev.nordix.wsserver.ui.composable.NordixIconButton
 import dev.nordix.wsserver.ui.composable.NordixTitle
@@ -21,6 +24,7 @@ import org.koin.compose.koinInject
 @Composable
 fun WindowScope.app(
     onClose: () -> Unit,
+    windowState: WindowState,
 ) {
 
     val observer = koinInject<KtorLifecycleObserver>()
@@ -30,6 +34,7 @@ fun WindowScope.app(
     val messages by messageRepo.messages.collectAsState()
     val ktorState by observer.currentStatus.collectAsState()
     val toggleState by server.toggleState.collectAsState()
+    val connectedDevices by server.connectedHosts.collectAsState()
 
     MaterialTheme {
         Scaffold(
@@ -38,32 +43,47 @@ fun WindowScope.app(
                     title = { NordixTitle(ktorState) },
                     actions = {
                         NordixIconButton(
-                            icon = Icons.Default.Delete,
+                            icon = Icons.Default.ClearAll,
                             onClick = messageRepo::clear
                         )
                         NordixIconButton(
-                            icon = if (!toggleState) Icons.Default.PlayArrow else Icons.Default.Lock,
-                            onClick = server::toggle
+                            icon = if (!toggleState) Icons.Default.Power else Icons.Default.PowerOff,
+                            onClick = server::toggleAll
                         )
                     },
                     navigationIcon = {
-                        NordixIconButton(
-                            icon = Icons.Default.Close,
-                            onClick = onClose
-                        )
+                        Row {
+                            NordixIconButton(
+                                icon = Icons.Default.Close,
+                                onClick = onClose
+                            )
+                            NordixIconButton(
+                                icon = Icons.Default.Minimize,
+                                onClick = { windowState.isMinimized = windowState.isMinimized.not() }
+                            )
+                        }
                     },
                 )
-            },
+            }
         ) { paddingValues ->
-            LazyColumn(
-                modifier = Modifier.padding(paddingValues).fillMaxWidth(),
-                contentPadding = PaddingValues(8.dp)
-            ) {
-                items(
-                    items = messages,
-                    key = { it.time},
-                    itemContent = { MessageCard(it) }
+            Row(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+                DevicesDrawer(connectedDevices)
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(1.dp)
+                        .background(MaterialTheme.colors.onSurface.copy(alpha = 0.12f))
                 )
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(8.dp)
+                ) {
+                    items(
+                        items = messages,
+                        key = { it.time},
+                        itemContent = { MessageCard(it) }
+                    )
+                }
             }
         }
     }

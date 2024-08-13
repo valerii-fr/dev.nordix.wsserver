@@ -1,6 +1,6 @@
 package dev.nordix.wsserver.stateholder
 
-import dev.nordix.wsserver.server.KtorStatus
+import dev.nordix.wsserver.server.model.KtorStatus
 import dev.nordix.wsserver.stateholder.KtorLifecycleObserver.ObserverCallback.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow

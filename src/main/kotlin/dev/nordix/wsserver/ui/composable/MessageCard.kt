@@ -6,9 +6,10 @@ import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.nordix.wsserver.server.Message
+import dev.nordix.wsserver.server.model.Message
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -20,22 +21,24 @@ fun MessageCard(item: Message) {
         elevation = 2.dp
     ) {
         Row(
-            modifier = Modifier.padding(4.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            modifier = Modifier.padding(4.dp).fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = item.text, style = MaterialTheme.typography.body1)
-            Column(
+            Text(
+                text = item.text,
+                style = MaterialTheme.typography.body1,
                 modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = DateTimeFormatter.ofPattern("HH:mm:ss").format(item.time.atZone(ZoneId.systemDefault())),
-                    style = MaterialTheme.typography.caption,
-                    color = MaterialTheme.colors.secondary
-                )
+            )
+            Column(horizontalAlignment = Alignment.End) {
                 Text(
                     text = item.from,
                     style = MaterialTheme.typography.caption,
-                    color = MaterialTheme.colors.secondary
+                    color = MaterialTheme.colors.primaryVariant
+                )
+                Text(
+                    text = DateTimeFormatter.ofPattern("HH:mm:ss").format(item.time.atZone(ZoneId.systemDefault())),
+                    style = MaterialTheme.typography.caption,
+                    color = MaterialTheme.colors.primaryVariant
                 )
             }
         }

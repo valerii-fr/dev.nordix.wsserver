@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Nordix WSS Ktor Server</string>
+    <string name="title">WSS Ktor Server</string>
+</resources>
