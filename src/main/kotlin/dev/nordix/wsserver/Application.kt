@@ -1,5 +1,6 @@
 package dev.nordix.wsserver
 
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
@@ -32,12 +33,12 @@ fun main(args: Array<String>) {
             onCloseRequest = { exitApplication() },
             title = stringResource(Res.string.app_name),
             undecorated = true,
-            resizable = false,
             state = state,
+            transparent = true,
             content = {
                 app(
                     onClose = { exitApplication() },
-                    windowState = state
+                    windowState = state,
                 )
             }
         )

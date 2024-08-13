@@ -9,12 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowScope
 import dev.nordix.wsserver.server.model.KtorStatus
 import me.sample.library.resources.Res
 import me.sample.library.resources.nordix
 import me.sample.library.resources.title
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 @Composable
@@ -28,9 +30,10 @@ fun WindowScope.NordixTitle(
             modifier = Modifier.fillMaxSize(),
         ) {
             Image(
-                imageVector = vectorResource(Res.drawable.nordix),
+                painter = painterResource(Res.drawable.nordix),
                 contentDescription = null,
-                modifier = Modifier.padding(12.dp).fillMaxHeight()
+                modifier = Modifier.padding(8.dp).height(48.dp).width(130.dp),
+                contentScale = ContentScale.Fit
             )
             Column {
                 Text(

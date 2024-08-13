@@ -1,5 +1,6 @@
 package dev.nordix.wsserver.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -40,8 +41,8 @@ fun WindowScope.app(
 
     val infiniteTransition = rememberInfiniteTransition()
     val toggleRotation by infiniteTransition.animateFloat(
-        initialValue = 0F,
-        targetValue = 360F,
+        initialValue = 360f,
+        targetValue = 0F,
         animationSpec = infiniteRepeatable(
             animation = tween(2500, easing = LinearEasing)
         )
@@ -58,8 +59,8 @@ fun WindowScope.app(
                             onClick = messageRepo::clear
                         )
                         NordixIconButton(
-                            icon = if (connectedDevices.isEmpty()) {
-                                if (toggleState) Icons.Default.Refresh else Icons.Default.HourglassDisabled
+                            icon = if (connectedDevices.isNotEmpty()) {
+                                if (toggleState) Icons.Default.ChangeCircle else Icons.Default.HourglassDisabled
                             } else {
                                 Icons.Default.SensorsOff
                             },

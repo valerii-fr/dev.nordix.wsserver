@@ -5,6 +5,9 @@ import dev.nordix.wsserver.Constants.SERVICE_NAME
 import dev.nordix.wsserver.Constants.SERVICE_PORT
 import dev.nordix.wsserver.Constants.SERVICE_PROTOCOL
 import dev.nordix.wsserver.Constants.SERVICE_VISIBLE_NAME
+import dev.nordix.wsserver.devices.DeviceAction
+import dev.nordix.wsserver.devices.DeviceActions
+import dev.nordix.wsserver.devices.DeviceType
 import dev.nordix.wsserver.helpers.KbHelper
 import dev.nordix.wsserver.server.model.ConnectedDevice
 import io.ktor.server.netty.*
@@ -30,11 +33,32 @@ class CommonServer (private val scope: CoroutineScope) {
         port = SERVICE_PORT,
     )
 
+    fun actByDevice(action: DeviceAction) {
+        println("acting code: ${action.code} from author: ${action.author} in list of connected ${connectedHosts.value.map { it.host }}")
+        connectedHosts.value.firstOrNull { it.host == action.author }
+            ?.let { authoredDevice ->
+                when(authoredDevice.type) {
+                    DeviceType.Button -> {
+                        when (action.code) {
+                            DeviceActions.Click.actionName -> toggleAll()
+                            DeviceActions.DoubleClick.actionName -> {
+                                println("double click performed by $authoredDevice")
+                            }
+                            DeviceActions.LongClick.actionName -> {
+                                println("long click performed by $authoredDevice")
+                            }
+                        }
+                    }
+                }
+            }
+    }
+
     fun setSocketCallback(address: String, block: (String) -> Unit) {
         socketCallbacks[address] = block
     }
 
     fun updateOnConnect(connectedDevice: ConnectedDevice) {
+        println("updating $connectedDevice")
         _connectedHosts.update {
             it.toMutableSet().apply {
                 removeIf { it.host == connectedDevice.host }

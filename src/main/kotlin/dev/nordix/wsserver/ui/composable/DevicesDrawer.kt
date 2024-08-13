@@ -6,12 +6,19 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.SmartButton
+import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import dev.nordix.wsserver.devices.DeviceType
 import dev.nordix.wsserver.server.model.ConnectedDevice
+import org.jetbrains.compose.resources.imageResource
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -43,12 +50,23 @@ private fun ConnectedDeviceCard(
         elevation = 2.dp,
         shape = RoundedCornerShape(5)
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(4.dp)) {
-            Text(text = device.host, style = MaterialTheme.typography.caption)
-            Text(text = device.name, style = MaterialTheme.typography.caption)
-            Text(
-                text = device.connectedAt.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_LOCAL_TIME),
-                style = MaterialTheme.typography.caption
+        Row(modifier = Modifier.fillMaxWidth().padding(4.dp)) {
+            Column(
+                verticalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(text = "host: ${device.host}", style = MaterialTheme.typography.caption)
+                Text(text = "name: ${device.name}", style = MaterialTheme.typography.caption)
+                Text(
+                    text = device.connectedAt.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_TIME),
+                    style = MaterialTheme.typography.caption
+                )
+            }
+            Icon(
+                imageVector = when(device.type) {
+                    DeviceType.Button -> Icons.Default.TouchApp
+                },
+                contentDescription = null,
             )
         }
     }

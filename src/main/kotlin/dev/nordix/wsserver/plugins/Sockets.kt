@@ -1,5 +1,9 @@
 package dev.nordix.wsserver.plugins
 
+import dev.nordix.wsserver.devices.DeviceAction
+import dev.nordix.wsserver.devices.DeviceType
+import dev.nordix.wsserver.devices.MessageTypes
+import dev.nordix.wsserver.helpers.JsonHelper.json
 import dev.nordix.wsserver.server.CommonServer
 import dev.nordix.wsserver.server.model.Message
 import dev.nordix.wsserver.server.MessageRepo
@@ -11,6 +15,8 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.koin.ktor.ext.inject
 import java.time.Duration
 import java.time.Instant
@@ -26,22 +32,18 @@ fun Application.configureSockets() {
         maxFrameSize = Long.MAX_VALUE
         masking = false
     }
+
     routing {
         webSocket("/ws") {
             val local = call.request.local
-            server.updateOnConnect(ConnectedDevice(
-                name = local.remoteHost,
-                host = local.remoteHost,
-                connectedAt = Instant.now(),
-            ))
 
-            server.setSocketCallback(call.request.local.remoteAddress) { string ->
+            server.setSocketCallback(local.remoteAddress) { string ->
                 scope.launch { send(string) }
             }
 
             scope.launch {
                 closeReason.await()
-                server.disconnected(call.request.local.remoteHost)
+                server.disconnected(local.remoteHost)
                 this.cancel()
             }
 
@@ -50,10 +52,36 @@ fun Application.configureSockets() {
                 when (frame) {
                     is Frame.Text -> {
                         val text = frame.readText()
-                        when (text) {
-                            "1.0" -> server.toggleToNoCallback(false)
-                            "1.1" -> server.toggleToNoCallback(true)
+
+                        val parsedJson = json.parseToJsonElement(text)
+                        when(parsedJson.jsonObject["type"]?.jsonPrimitive?.content) {
+                            MessageTypes.Action.typeName -> {
+                                server.actByDevice(
+                                    DeviceAction(
+                                        author = local.remoteHost,
+                                        code = parsedJson.jsonObject["code"]?.jsonPrimitive?.content
+                                            ?: throw IllegalArgumentException("json contains no act code")
+                                    )
+                                )
+                            }
+                            MessageTypes.Presentation.typeName -> {
+                                val cd = ConnectedDevice(
+                                    name = parsedJson.jsonObject["name"]?.jsonPrimitive?.content ?: local.remoteHost,
+                                    host = local.remoteHost,
+                                    connectedAt = Instant.now(),
+                                    type = when(parsedJson.jsonObject["device_type"]?.jsonPrimitive?.content) {
+                                        DeviceType.Button.typeName -> DeviceType.Button
+                                        null -> throw IllegalArgumentException("json contains no device type")
+                                        else -> throw UnsupportedOperationException("unsupported device type")
+                                    }
+                                )
+                                println("presented $cd")
+                                server.updateOnConnect(cd)
+                            }
+                            null -> throw IllegalArgumentException("json contains no message type parameter")
+                            else -> throw UnsupportedOperationException("no such element in known list")
                         }
+
                         messageRepo.receive(
                             Message(
                                 from = call.request.local.remoteHost,
