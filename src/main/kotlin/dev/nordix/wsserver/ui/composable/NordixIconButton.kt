@@ -11,10 +11,12 @@ fun NordixIconButton(
     modifier: Modifier = Modifier,
     icon: ImageVector,
     onClick: () -> Unit,
+    enabled: Boolean = true,
 ) {
     IconButton(
         modifier = modifier,
-        onClick = onClick
+        onClick = onClick,
+        enabled = enabled
     ) {
         Icon(
             imageVector = icon,

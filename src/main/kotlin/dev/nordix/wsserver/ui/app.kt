@@ -54,12 +54,17 @@ fun WindowScope.app(
                     title = { NordixTitle(ktorState) },
                     actions = {
                         NordixIconButton(
-                            icon = Icons.Default.ClearAll,
+                            icon = Icons.Default.PlaylistRemove,
                             onClick = messageRepo::clear
                         )
                         NordixIconButton(
-                            icon = if (toggleState) Icons.Default.Refresh else Icons.Default.HourglassDisabled,
-                            onClick = server::toggleAll,
+                            icon = if (connectedDevices.isEmpty()) {
+                                if (toggleState) Icons.Default.Refresh else Icons.Default.HourglassDisabled
+                            } else {
+                                Icons.Default.SensorsOff
+                            },
+                            onClick = { if (connectedDevices.isNotEmpty()) server.toggleAll() },
+                            enabled = connectedDevices.isNotEmpty(),
                             modifier = Modifier.rotate(
                                 if(toggleState) toggleRotation else 0f
                             )
