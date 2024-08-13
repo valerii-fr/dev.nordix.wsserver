@@ -9,7 +9,6 @@ import dev.nordix.wsserver.devices.DeviceAction
 import dev.nordix.wsserver.devices.DeviceActions
 import dev.nordix.wsserver.devices.DeviceType
 import dev.nordix.wsserver.devices.DeviceEffect
-import dev.nordix.wsserver.helpers.JsonHelper.json
 import dev.nordix.wsserver.helpers.KbHelper
 import dev.nordix.wsserver.server.model.ConnectedDevice
 import io.ktor.server.netty.*
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.encodeToJsonElement
 
 class CommonServer (private val scope: CoroutineScope) {
 

@@ -10,15 +10,12 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.SmartButton
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.nordix.wsserver.devices.DeviceType
 import dev.nordix.wsserver.server.model.ConnectedDevice
-import org.jetbrains.compose.resources.imageResource
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
