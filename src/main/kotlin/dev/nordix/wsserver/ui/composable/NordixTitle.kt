@@ -20,7 +20,7 @@ import me.sample.library.resources.nordix
 import me.sample.library.resources.title
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
+
 @Composable
 fun WindowScope.NordixTitle(
     ktorState: KtorStatus,
