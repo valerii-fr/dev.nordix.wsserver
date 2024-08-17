@@ -49,7 +49,7 @@ dependencies {
 }
 
 application {
-    mainClass = "MainKt"
+    mainClass = "dev.nordix.wsserver.ApplicationKt"
 }
 
 compose.desktop {

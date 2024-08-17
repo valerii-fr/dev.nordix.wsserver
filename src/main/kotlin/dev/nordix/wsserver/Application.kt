@@ -30,11 +30,13 @@ fun main(args: Array<String>) {
     observer.setCallback(OnStartedCallback { server.register() })
     observer.setCallback(OnStoppedCallback { server.unregister() })
 
-    scope.launch {
-        server.invoke(args)
-    }
+
 
     if (args.none { it == "nogui" }) {
+        scope.launch {
+            server.invoke(args)
+        }
+
         application {
             val state = rememberWindowState(
                 size = DpSize(DefaultWidth, TopBarHeight),
@@ -72,5 +74,8 @@ fun main(args: Array<String>) {
             }
 
         }
+    } else {
+        server.invoke(args)
     }
+
 }
