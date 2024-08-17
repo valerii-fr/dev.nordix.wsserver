@@ -3,7 +3,6 @@ package dev.nordix.wsserver
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import dev.nordix.wsserver.di.appModule
 import dev.nordix.wsserver.server.CommonServer
@@ -48,9 +47,7 @@ fun main(args: Array<String>) {
                 Tray(
                     state = trayState,
                     icon = painterResource("n.png"),
-                    onAction = {
-                        state.isMinimized = false
-                    },
+                    onAction = { state.isMinimized = false },
                     menu = {
                         Item(
                             "Exit",
@@ -58,21 +55,22 @@ fun main(args: Array<String>) {
                         )
                     }
                 )
+            } else {
+                Window(
+                    onCloseRequest = { exitApplication() },
+                    title = stringResource(Res.string.app_name),
+                    undecorated = true,
+                    state = state,
+                    transparent = true,
+                    content = {
+                        NordixApp(
+                            onClose = { exitApplication() },
+                            windowState = state,
+                        )
+                    }
+                )
             }
 
-            Window(
-                onCloseRequest = { exitApplication() },
-                title = stringResource(Res.string.app_name),
-                undecorated = true,
-                state = state,
-                transparent = true,
-                content = {
-                    NordixApp(
-                        onClose = { exitApplication() },
-                        windowState = state,
-                    )
-                }
-            )
         }
     }
 }

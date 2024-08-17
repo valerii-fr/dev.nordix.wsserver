@@ -45,7 +45,7 @@ fun WindowScope.NordixTitle(
                         )
                     }
                 }
-                Spacer(Modifier.width(32.dp))
+                Spacer(Modifier.width(16.dp))
             }
             Image(
                 painter = painterResource(Res.drawable.nordix),

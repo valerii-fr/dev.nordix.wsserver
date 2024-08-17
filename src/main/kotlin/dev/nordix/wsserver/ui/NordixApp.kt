@@ -11,7 +11,6 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowScope
@@ -30,7 +29,6 @@ fun WindowScope.NordixApp(
     onClose: () -> Unit,
     windowState: WindowState,
 ) {
-    val density = LocalDensity.current
     val collapsedSize = DpSize(DefaultWidth, TopBarHeight)
     val expandedSize = DpSize(DefaultWidth, ExpandedHeight)
     var expandConnections by remember { mutableStateOf(false) }
