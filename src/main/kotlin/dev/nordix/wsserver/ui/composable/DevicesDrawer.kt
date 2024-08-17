@@ -10,7 +10,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.TouchApp
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -60,9 +60,7 @@ private fun ConnectedDeviceCard(
                 )
             }
             Icon(
-                imageVector = when(device.type) {
-                    DeviceType.Button -> Icons.Default.TouchApp
-                },
+                imageVector = device.type.icon,
                 contentDescription = null,
             )
         }

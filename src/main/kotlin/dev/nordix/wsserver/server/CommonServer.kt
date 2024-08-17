@@ -9,7 +9,6 @@ import dev.nordix.wsserver.devices.DeviceAction
 import dev.nordix.wsserver.devices.DeviceActions
 import dev.nordix.wsserver.devices.DeviceType
 import dev.nordix.wsserver.devices.DeviceEffect
-import dev.nordix.wsserver.helpers.KbHelper
 import dev.nordix.wsserver.server.model.ConnectedDevice
 import io.ktor.server.netty.*
 import kotlinx.coroutines.CoroutineScope
@@ -50,6 +49,9 @@ class CommonServer (private val scope: CoroutineScope) {
                             }
                         }
                     }
+                    DeviceType.YtIntegration -> {
+
+                    }
                 }
             }
     }
@@ -85,13 +87,15 @@ class CommonServer (private val scope: CoroutineScope) {
 
     fun toggleAll() {
         _toggleState.value = !_toggleState.value
+        val (nonYtDevices, ytDevices) = connectedHosts.value.partition { it.type != DeviceType.YtIntegration }
+
         scope.launch {
             if (toggleState.value) {
-                KbHelper.startTimer()
-                postEffect(DeviceEffect.LedOff, *socketCallbacks.keys.toTypedArray())
+                postEffect(DeviceEffect.LedOff, *nonYtDevices.map { it.host }.toTypedArray())
+                postEffect(DeviceEffect.StartTimer, *ytDevices.map { it.host }.toTypedArray())
             } else {
-                KbHelper.pauseTimer()
-                postEffect(DeviceEffect.LedOn, *socketCallbacks.keys.toTypedArray())
+                postEffect(DeviceEffect.LedOn, *nonYtDevices.map { it.host }.toTypedArray())
+                postEffect(DeviceEffect.StopTimer, *ytDevices.map { it.host }.toTypedArray())
             }
         }
     }

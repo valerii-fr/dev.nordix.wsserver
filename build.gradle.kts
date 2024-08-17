@@ -44,6 +44,7 @@ dependencies {
     implementation("io.insert-koin:koin-logger-slf4j")
     ksp("io.insert-koin:koin-ksp-compiler:1.4.0-RC3")
     implementation("com.appstractive:dns-sd-kt:1.0.0")
+    implementation("com.github.ajalt.clikt:clikt:4.4.0")
 
 }
 

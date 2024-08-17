@@ -37,7 +37,7 @@ fun Application.configureSockets() {
         webSocket("/ws") {
             val local = call.request.local
 
-            server.setSocketCallback(local.remoteAddress) { string ->
+            server.setSocketCallback(local.remoteHost) { string ->
                 scope.launch {
                     println("sending from callback $string")
                     send(string)
@@ -55,6 +55,7 @@ fun Application.configureSockets() {
                 when (frame) {
                     is Frame.Text -> {
                         val text = frame.readText()
+                        println(text)
 
                         val parsedJson = json.parseToJsonElement(text)
                         when(parsedJson.jsonObject["type"]?.jsonPrimitive?.content) {
@@ -74,6 +75,7 @@ fun Application.configureSockets() {
                                     connectedAt = Instant.now(),
                                     type = when(parsedJson.jsonObject["device_type"]?.jsonPrimitive?.content) {
                                         DeviceType.Button.typeName -> DeviceType.Button
+                                        DeviceType.YtIntegration.typeName -> DeviceType.YtIntegration
                                         null -> throw IllegalArgumentException("json contains no device type")
                                         else -> throw UnsupportedOperationException("unsupported device type")
                                     }
